@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Course {
+  id        Int        @id @default(autoincrement())
+  name      String
+  semesters Semester[]
+}
+
+model Semester {
+  id        Int        @id @default(autoincrement())
+  name      String
+  course    Course     @relation(fields: [courseId], references: [id])
+  courseId  Int
+  subjects  Subject[]
+}
+
+model Subject {
+  id         Int        @id @default(autoincrement())
+  name       String
+  semester   Semester   @relation(fields: [semesterId], references: [id])
+  semesterId Int
+  modules    Module[]
+}
+
+model Module {
+  id        Int        @id @default(autoincrement())
+  name      String
+  subject   Subject    @relation(fields: [subjectId], references: [id])
+  subjectId Int
+  questions Question[]
+}
+
+model Question {
+  id         Int      @id @default(autoincrement())
+  module     Module   @relation(fields: [moduleId], references: [id])
+  moduleId   Int
+  question   String
+  options    Json     // { "A": "text", "B": "text", ... }
+  answer     String   // "A", "B", etc.
+  explanation String?
+}
