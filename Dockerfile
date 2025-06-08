@@ -1,23 +1,19 @@
-# Use the official Node.js image
-FROM node:20-alpine
+GNU nano 6.2                                                                                        Dockerfile                                                                                                 # Stage 1: Build
+FROM node:20-alpine AS builder
 
-# Set working directory
 WORKDIR /app
-
-# Copy package files first (for better build caching)
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
-
-# Copy the rest of the code
 COPY . .
-
-# Build the NestJS app
 RUN npm run build
 
-# Expose the port (adjust if your app uses a different one)
-EXPOSE 3000
+# Stage 2: Runtime
+FROM node:20-alpine
 
-# Run the app
-CMD ["npm", "run", "start:prod"]
+WORKDIR /app
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package*.json ./
+RUN npm install --only=production
+
+EXPOSE 3000
+CMD ["node", "dist/src"]
