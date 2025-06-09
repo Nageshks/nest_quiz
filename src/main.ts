@@ -6,6 +6,7 @@ const frontendUrl = process.env.FRONTEND_URL || null;
 const allowedOrigins = [
   'http://localhost:4200',
   'http://localhost:5173',
+  'http://localhost:3000',
   'https://quiz.nageshks.com',
   ...(frontendUrl ? [frontendUrl] : []),
 ];
